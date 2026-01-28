@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Economic Calendar | Journalyst</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: #3a3a5e; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4a4a6e; }
+        
+        /* Glow effects */
+        .glow-red { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+        .glow-focus { box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3); }
+        
+        /* Slide panel animation */
+        .slide-panel { transform: translateX(100%); transition: transform 0.3s ease-out; }
+        .slide-panel.open { transform: translateX(0); }
+        
+        /* Skeleton animation */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #2a2a4a 25%, #3a3a5a 50%, #2a2a4a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        /* High impact row indicator */
+        .high-impact-row { border-left: 3px solid #ef4444; }
+        
+        /* Filter bar horizontal scroll */
+        .filter-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+        .filter-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-[#0d0d1a] text-gray-100 min-h-screen">
+    <div id="app" class="max-w-7xl mx-auto px-4 py-6">
+        
+        <!-- Page Header -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                    <span class="text-3xl">🌍</span>
+                    Forex Economic Calendar
+                </h1>
+                <p class="text-gray-400 mt-1 text-sm md:text-base">Track high-impact economic events affecting currency markets</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Timezone Selector -->
+                <div class="relative">
+                    <select id="timezone" class="bg-[#1a1a2e] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none pr-8 cursor-pointer">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">New York (EST)</option>
+                        <option value="Europe/London">London (GMT)</option>
+                        <option value="Asia/Tokyo">Tokyo (JST)</option>
+                        <option value="Australia/Sydney">Sydney (AEST)</option>
+                    </select>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▾</span>
+                </div>
+                <!-- Date Picker -->
+                <input type="date" id="datePicker" class="bg-[#1a1a2e] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 cursor-pointer">
+                <!-- Refresh Button -->
+                <button onclick="refreshData()" class="bg-[#1a1a2e] border border-gray-700 rounded-lg p-2 hover:bg-[#2a2a4a] transition-colors focus:outline-none focus:border-indigo-500" title="Refresh">
+                    <svg id="refreshIcon" class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Filter Control Bar -->
+        <div class="bg-[#12121f] border border-gray-800 rounded-xl p-4 mb-6">
+            <div class="flex items-center gap-3 overflow-x-auto filter-scroll pb-2 md:pb-0">
+                <!-- Search -->
+                <div class="relative flex-shrink-0">
+                    <input type="text" id="searchInput" placeholder="Search events..." class="bg-[#1a1a2e] border border-gray-700 rounded-lg pl-9 pr-4 py-2 text-sm text-gray-200 w-48 focus:outline-none focus:border-indigo-500 focus:glow-focus placeholder-gray-500">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                
+                <!-- Currency Multi-select -->
+                <div class="relative flex-shrink-0">
+                    <button onclick="toggleCurrencyDropdown()" class="bg-[#1a1a2e] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 flex items-center gap-2 hover:bg-[#2a2a4a] transition-colors">
+                        <span>💱 Currency</span>
+                        <span id="currencyCount" class="bg-indigo-600 text-white text-xs px-1.5 py-0.5 rounded hidden">0</span>
+                        <span>▾</span>
+                    </button>
+                    <div id="currencyDropdown" class="absolute top-full left-0 mt-2 bg-[#1a1a2e] border border-gray-700 rounded-lg p-3 z-50 hidden min-w-[160px] shadow-xl">
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="USD" class="currency-filter rounded"> <span class="text-blue-400">USD</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="EUR" class="currency-filter rounded"> <span class="text-purple-400">EUR</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="GBP" class="currency-filter rounded"> <span class="text-yellow-400">GBP</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="JPY" class="currency-filter rounded"> <span class="text-red-400">JPY</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="AUD" class="currency-filter rounded"> <span class="text-gray-400">AUD</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="CAD" class="currency-filter rounded"> <span class="text-gray-400">CAD</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="CHF" class="currency-filter rounded"> <span class="text-gray-400">CHF</span></label>
+                        <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-white"><input type="checkbox" value="NZD" class="currency-filter rounded"> <span class="text-gray-400">NZD</span></label>
+                    </div>
+                </div>
+                
+                <!-- Impact Filter -->
+                <div class="relative flex-shrink-0">
+                    <select id="impactFilter" class="bg-[#1a1a2e] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 appearance-none pr-8 cursor-pointer">
+                        <option value="">⚡ All Impact</option>
+                        <option value="high">🔴 High</option>
+                        <option value="medium">🟠 Medium</option>
+                        <option value="low">🟡 Low</option>
+                    </select>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▾</span>
+                </div>
+                
+                <!-- Date Range -->
+                <div class="relative flex-shrink-0">
+                    <select id="dateRange" class="bg-[#1a1a2e] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 appearance-none pr-8 cursor-pointer">
+                        <option value="today">📅 Today</option>
+                        <option value="week" selected>📆 This Week</option>
+                        <option value="custom">🗓 Custom</option>
+                    </select>
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▾</span>
+                </div>
+                
+                <div class="flex-grow"></div>
+                
+                <!-- Reset Button -->
+                <button onclick="resetFilters()" class="flex-shrink-0 bg-[#1a1a2e] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-[#2a2a4a] transition-colors">
+                    ↺ Reset
+                </button>
+                
+                <!-- Refresh Data -->
+                <button onclick="refreshData()" class="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 rounded-lg px-4 py-2 text-sm text-white transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar Table Container -->
+        <div class="bg-[#12121f] border border-gray-800 rounded-xl overflow-hidden">
+            <!-- Desktop Table View -->
+            <div id="tableContainer" class="hidden md:block overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-[#0d0d1a] border-b border-gray-800">
+                        <tr>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Time</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Currency</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Impact</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Event</th>
+                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Forecast</th>
+                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actual</th>
+                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Previous</th>
+                            <th class="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Mobile Card View -->
+            <div id="cardContainer" class="md:hidden p-4 space-y-4">
+                <!-- Dynamic content -->
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden p-8">
+                <div class="space-y-4">
+                    <div class="skeleton h-12 rounded-lg"></div>
+                    <div class="skeleton h-12 rounded-lg"></div>
+                    <div class="skeleton h-12 rounded-lg"></div>
+                    <div class="skeleton h-12 rounded-lg"></div>
+                    <div class="skeleton h-12 rounded-lg"></div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden p-12 text-center">
+                <div class="text-6xl mb-4">📭</div>
+                <h3 class="text-xl font-semibold text-gray-300 mb-2">No events match your filters</h3>
+                <p class="text-gray-500 mb-4">Try adjusting your search criteria or date range</p>
+                <button onclick="resetFilters()" class="bg-indigo-600 hover:bg-indigo-700 rounded-lg px-6 py-2 text-white transition-colors">
+                    Reset Filters
+                </button>
+            </div>
+            
+            <!-- Error State -->
+            <div id="errorState" class="hidden p-12 text-center">
+                <div class="text-6xl mb-4">⚠️</div>
+                <h3 class="text-xl font-semibold text-red-400 mb-2">Failed to load calendar data</h3>
+                <p class="text-gray-500 mb-4">Please check your connection and try again</p>
+                <button onclick="refreshData()" class="bg-red-600 hover:bg-red-700 rounded-lg px-6 py-2 text-white transition-colors flex items-center gap-2 mx-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Retry
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Details Slide Panel -->
+    <div id="panelOverlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="closePanel()"></div>
+    <aside id="detailsPanel" class="slide-panel fixed top-0 right-0 h-full w-full md:w-[420px] bg-[#12121f] border-l border-gray-800 z-50 overflow-y-auto shadow-2xl">
+        <div class="p-6">
+            <!-- Panel Header -->
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex-1 pr-4">
+                    <h2 id="panelTitle" class="text-xl font-bold text-white mb-2">Event Title</h2>
+                    <p id="panelDateTime" class="text-gray-400 text-sm flex items-center gap-2">
+                        <span>📅</span>
+                        <span>Jan 19, 2025 • 08:30 EST</span>
+                    </p>
+                </div>
+                <button onclick="closePanel()" class="text-gray-400 hover:text-white transition-colors p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Badges -->
+            <div id="panelBadges" class="flex items-center gap-3 mb-6">
+                <!-- Dynamic badges -->
+            </div>
+            
+            <!-- Event Data Section -->
+            <div class="bg-[#0d0d1a] rounded-xl p-4 mb-6 border border-gray-800">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Event Data</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Forecast</span>
+                        <span id="panelForecast" class="text-white font-medium">—</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Actual</span>
+                        <span id="panelActual" class="text-white font-medium">—</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Previous</span>
+                        <span id="panelPrevious" class="text-white font-medium">—</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Description Section -->
+            <div class="bg-[#0d0d1a] rounded-xl p-4 mb-6 border border-gray-800">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Description</h3>
+                <p id="panelDescription" class="text-gray-300 text-sm leading-relaxed">
+                    Event description will appear here...
+                </p>
+            </div>
+            
+            <!-- Footer -->
+            <div class="pt-4 border-t border-gray-800">
+                <a id="panelSourceLink" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full bg-[#1a1a2e] hover:bg-[#2a2a4a] border border-gray-700 rounded-lg px-4 py-3 text-gray-300 hover:text-white transition-colors">
+                    <span>Open Source</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+        // Sample event data
+        const eventsData = [
+            { id: 1, date: '2025-01-20', time: '08:30', currency: 'USD', impact: 'high', title: 'Consumer Price Index (CPI) m/m', forecast: '0.3%', actual: '0.4%', previous: '0.2%', url: 'https://www.bls.gov/cpi/', description: 'Measures the change in the price of goods and services purchased by consumers. It is the main indicator of inflation.' },
+            { id: 2, date: '2025-01-20', time: '10:00', currency: 'EUR', impact: 'high', title: 'ECB Interest Rate Decision', forecast: '4.25%', actual: null, previous: '4.25%', url: 'https://www.ecb.europa.eu/', description: 'The European Central Bank decides on the interest rate for the Eurozone. Higher rates strengthen the Euro.' },
+            { id: 3, date: '2025-01-20', time: '14:00', currency: 'GBP', impact: 'medium', title: 'Claimant Count Change', forecast: '15.2K', actual: '12.8K', previous: '18.5K', url: 'https://www.ons.gov.uk/', description: 'Measures the change in the number of people claiming unemployment benefits during the reported month.' },
+            { id: 4, date: '2025-01-21', time: '00:30', currency: 'JPY', impact: 'high', title: 'Bank of Japan Rate Decision', forecast: '-0.1%', actual: null, previous: '-0.1%', url: 'https://www.boj.or.jp/', description: 'The Bank of Japan sets the target interest rate. Changes impact the value of the Japanese Yen significantly.' },
+            { id: 5, date: '2025-01-21', time: '09:00', currency: 'EUR', impact: 'medium', title: 'German ZEW Economic Sentiment', forecast: '15.3', actual: '17.2', previous: '12.5', url: 'https://www.zew.de/', description: 'Survey of up to 300 experts on the relative 6-month economic outlook for Germany.' },
+            { id: 6, date: '2025-01-21', time: '13:30', currency: 'USD', impact: 'medium', title: 'Building Permits', forecast: '1.48M', actual: null, previous: '1.46M', url: 'https://www.census.gov/', description: 'Annualized number of new residential building permits issued during the month. A leading indicator of housing activity.' },
+            { id: 7, date: '2025-01-22', time: '07:00', currency: 'GBP', impact: 'high', title: 'CPI y/y', forecast: '4.1%', actual: null, previous: '3.9%', url: 'https://www.ons.gov.uk/', description: 'Year-over-year change in the price of goods and services purchased by consumers in the UK.' },
+            { id: 8, date: '2025-01-22', time: '10:00', currency: 'CAD', impact: 'low', title: 'NHPI m/m', forecast: '0.2%', actual: '0.1%', previous: '0.3%', url: 'https://www.statcan.gc.ca/', description: 'New Housing Price Index measures the change in the selling prices of new residential houses.' },
+            { id: 9, date: '2025-01-22', time: '15:00', currency: 'USD', impact: 'high', title: 'FOMC Meeting Minutes', forecast: null, actual: null, previous: null, url: 'https://www.federalreserve.gov/', description: 'Detailed record of the FOMC most recent meeting, providing insights on economic conditions and future policy.' },
+            { id: 10, date: '2025-01-23', time: '02:00', currency: 'AUD', impact: 'medium', title: 'Employment Change', forecast: '25.0K', actual: null, previous: '35.6K', url: 'https://www.abs.gov.au/', description: 'Change in the number of employed people. Job creation is an important leading indicator of consumer spending.' },
+            { id: 11, date: '2025-01-23', time: '09:30', currency: 'CHF', impact: 'low', title: 'Trade Balance', forecast: '4.2B', actual: '4.5B', previous: '3.9B', url: 'https://www.snb.ch/', description: 'Difference in value between imported and exported goods during the reported month.' },
+            { id: 12, date: '2025-01-24', time: '08:30', currency: 'USD', impact: 'high', title: 'Core PCE Price Index m/m', forecast: '0.2%', actual: null, previous: '0.1%', url: 'https://www.bea.gov/', description: 'Fed\'s preferred inflation measure. Excludes volatile food and energy prices for a clearer inflation picture.' },
+            { id: 13, date: '2025-01-24', time: '10:00', currency: 'NZD', impact: 'medium', title: 'Credit Card Spending y/y', forecast: null, actual: '3.2%', previous: '2.8%', url: 'https://www.rbnz.govt.nz/', description: 'Measures the annual change in the total value of credit card transactions.' },
+        ];
+
+        // State
+        let state = {
+            events: [...eventsData],
+            filteredEvents: [...eventsData],
+            selectedTimezone: 'UTC',
+            loading: false,
+            error: false,
+            selectedCurrencies: [],
+            searchQuery: '',
+            impactFilter: '',
+            dateRange: 'week'
+        };
+
+        // Currency badge colors
+        const currencyColors = {
+            USD: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+            EUR: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
+            GBP: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+            JPY: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
+            default: { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' }
+        };
+
+        // Impact badge styles
+        const impactStyles = {
+            high: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30', icon: '🔴', glow: 'glow-red' },
+            medium: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30', icon: '🟠', glow: '' },
+            low: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30', icon: '🟡', glow: '' }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initDatePicker();
+            attachEventListeners();
+            renderTable();
+        });
+
+        function initDatePicker() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('datePicker').value = today;
+        }
+
+        function attachEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+            document.getElementById('impactFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateRange').addEventListener('change', applyFilters);
+            document.getElementById('timezone').addEventListener('change', (e) => {
+                state.selectedTimezone = e.target.value;
+                renderTable();
+            });
+            document.getElementById('datePicker').addEventListener('change', applyFilters);
+            
+            document.querySelectorAll('.currency-filter').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    updateCurrencyFilter();
+                    applyFilters();
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#currencyDropdown') && !e.target.closest('button[onclick="toggleCurrencyDropdown()"]')) {
+                    document.getElementById('currencyDropdown').classList.add('hidden');
+                }
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function toggleCurrencyDropdown() {
+            document.getElementById('currencyDropdown').classList.toggle('hidden');
+        }
+
+        function updateCurrencyFilter() {
+            const checked = document.querySelectorAll('.currency-filter:checked');
+            state.selectedCurrencies = Array.from(checked).map(cb => cb.value);
+            const countEl = document.getElementById('currencyCount');
+            if (state.selectedCurrencies.length > 0) {
+                countEl.textContent = state.selectedCurrencies.length;
+                countEl.classList.remove('hidden');
+            } else {
+                countEl.classList.add('hidden');
+            }
+        }
+
+        function applyFilters() {
+            state.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            state.impactFilter = document.getElementById('impactFilter').value;
+            state.dateRange = document.getElementById('dateRange').value;
+            
+            state.filteredEvents = state.events.filter(event => {
+                // Search filter
+                if (state.searchQuery && !event.title.toLowerCase().includes(state.searchQuery)) {
+                    return false;
+                }
+                // Currency filter
+                if (state.selectedCurrencies.length > 0 && !state.selectedCurrencies.includes(event.currency)) {
+                    return false;
+                }
+                // Impact filter
+                if (state.impactFilter && event.impact !== state.impactFilter) {
+                    return false;
+                }
+                return true;
+            });
+            
+            renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('impactFilter').value = '';
+            document.getElementById('dateRange').value = 'week';
+            document.querySelectorAll('.currency-filter').forEach(cb => cb.checked = false);
+            state.selectedCurrencies = [];
+            document.getElementById('currencyCount').classList.add('hidden');
+            state.filteredEvents = [...state.events];
+            renderTable();
+        }
+
+        function refreshData() {
+            const icon = document.getElementById('refreshIcon');
+            icon.classList.add('animate-spin');
+            showLoading();
+            
+            // Simulate API call
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+                hideLoading();
+                renderTable();
+            }, 1500);
+        }
+
+        function showLoading() {
+            state.loading = true;
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('tableContainer').classList.add('hidden');
+            document.getElementById('cardContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            state.loading = false;
+            document.getElementById('loadingState').classList.add('hidden');
+        }
+
+        function formatTime(time, timezone) {
+            const [hours, minutes] = time.split(':');
+            const date = new Date();
+            date.setUTCHours(parseInt(hours), parseInt(minutes), 0, 0);
+            
+            try {
+                return date.toLocaleTimeString('en-US', {
+                    timeZone: timezone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            } catch {
+                return time;
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function getCurrencyBadge(currency) {
+            const colors = currencyColors[currency] || currencyColors.default;
+            return `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border}">${currency}</span>`;
+        }
+
+        function getImpactBadge(impact) {
+            const style = impactStyles[impact];
+            return `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${style.bg} ${style.text} border ${style.border} ${style.glow}">${style.icon} ${impact.charAt(0).toUpperCase() + impact.slice(1)}</span>`;
+        }
+
+        function getValueColor(actual, forecast) {
+            if (!actual || !forecast) return 'text-gray-400';
+            const actualNum = parseFloat(actual);
+            const forecastNum = parseFloat(forecast);
+            if (isNaN(actualNum) || isNaN(forecastNum)) return 'text-gray-400';
+            if (actualNum > forecastNum) return 'text-green-400';
+            if (actualNum < forecastNum) return 'text-red-400';
+            return 'text-gray-400';
+        }
+
+        function isPastEvent(date, time) {
+            const eventDate = new Date(`${date}T${time}:00`);
+            return eventDate < new Date();
+        }
+
+        function renderTable() {
+            hideLoading();
+            
+            if (state.filteredEvents.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('tableContainer').classList.add('hidden');
+                document.getElementById('cardContainer').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('tableContainer').classList.remove('hidden');
+            document.getElementById('cardContainer').classList.remove('hidden');
+            
+            renderDesktopTable();
+            renderMobileCards();
+        }
+
+        function renderDesktopTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = state.filteredEvents.map(event => {
+                const isPast = isPastEvent(event.date, event.time);
+                const rowClass = event.impact === 'high' ? 'high-impact-row' : '';
+                const opacityClass = isPast ? 'opacity-60' : '';
+                const actualColor = getValueColor(event.actual, event.forecast);
+                
+                return `
+                    <tr class="${rowClass} ${opacityClass} hover:bg-[#1a1a2e] transition-colors border-b border-gray-800/50 cursor-pointer" onclick="openPanel(${event.id})">
+                        <td class="px-4 py-3 text-sm text-gray-300">${formatDate(event.date)}</td>
+                        <td class="px-4 py-3 text-sm text-gray-300 font-mono">${formatTime(event.time, state.selectedTimezone)}</td>
+                        <td class="px-4 py-3">${getCurrencyBadge(event.currency)}</td>
+                        <td class="px-4 py-3">${getImpactBadge(event.impact)}</td>
+                        <td class="px-4 py-3 text-sm text-gray-100 font-medium max-w-xs truncate">${event.title}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400 text-right font-mono">${event.forecast || '—'}</td>
+                        <td class="px-4 py-3 text-sm text-right font-mono ${actualColor}">${event.actual || '—'}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400 text-right font-mono">${event.previous || '—'}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-300 bg-[#1a1a2e] border border-gray-700 rounded-full hover:bg-[#2a2a4a] hover:text-white transition-colors">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderMobileCards() {
+            const container = document.getElementById('cardContainer');
+            container.innerHTML = state.filteredEvents.map(event => {
+                const isPast = isPastEvent(event.date, event.time);
+                const opacityClass = isPast ? 'opacity-60' : '';
+                const actualColor = getValueColor(event.actual, event.forecast);
+                const borderClass = event.impact === 'high' ? 'border-l-4 border-l-red-500' : '';
+                
+                return `
+                    <div class="bg-[#1a1a2e] rounded-xl p-4 ${borderClass} ${opacityClass} border border-gray-800">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-400 text-sm">📅 ${formatDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)}</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-3">
+                            ${getCurrencyBadge(event.currency)}
+                            ${getImpactBadge(event.impact)}
+                        </div>
+                        <h3 class="text-white font-medium mb-3">📰 ${event.title}</h3>
+                        <div class="grid grid-cols-3 gap-2 text-sm mb-4">
+                            <div>
+                                <span class="text-gray-500 block text-xs">Forecast</span>
+                                <span class="text-gray-300 font-mono">${event.forecast || '—'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block text-xs">Actual</span>
+                                <span class="${actualColor} font-mono">${event.actual || '—'}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block text-xs">Previous</span>
+                                <span class="text-gray-300 font-mono">${event.previous || '—'}</span>
+                            </div>
+                        </div>
+                        <button onclick="openPanel(${event.id})" class="w-full py-2 bg-[#12121f] border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:bg-[#2a2a4a] transition-colors text-sm font-medium">
+                            View Details
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openPanel(eventId) {
+            const event = state.events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            document.getElementById('panelTitle').textContent = event.title;
+            document.getElementById('panelDateTime').innerHTML = `<span>📅</span><span>${formatDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)} (${state.selectedTimezone})</span>`;
+            document.getElementById('panelBadges').innerHTML = `${getCurrencyBadge(event.currency)} ${getImpactBadge(event.impact)}`;
+            
+            const actualColor = getValueColor(event.actual, event.forecast);
+            document.getElementById('panelForecast').textContent = event.forecast || '—';
+            document.getElementById('panelActual').className = `font-medium ${actualColor}`;
+            document.getElementById('panelActual').textContent = event.actual || '—';
+            document.getElementById('panelPrevious').textContent = event.previous || '—';
+            document.getElementById('panelDescription').textContent = event.description;
+            document.getElementById('panelSourceLink').href = event.url;
+            
+            document.getElementById('panelOverlay').classList.remove('hidden');
+            document.getElementById('detailsPanel').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePanel() {
+            document.getElementById('panelOverlay').classList.add('hidden');
+            document.getElementById('detailsPanel').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePanel();
+        });
+    </script>
+</body>
+</html>
