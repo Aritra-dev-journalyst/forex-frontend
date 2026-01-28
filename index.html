@@ -18,6 +18,8 @@
         /* Glow effects */
         .glow-red { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
         .glow-focus { box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3); }
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
         
         /* Slide panel animation */
         .slide-panel { transform: translateX(100%); transition: transform 0.3s ease-out; }
@@ -37,15 +39,136 @@
         /* High impact row indicator */
         .high-impact-row { border-left: 3px solid #ef4444; }
         
+        /* Today's news row - Blue highlight - MORE PROMINENT */
+        .today-row {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(59, 130, 246, 0.02) 100%);
+            border-left: 4px solid #3b82f6 !important;
+            position: relative;
+        }
+        .today-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .today-row:hover {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.15) 50%, rgba(26, 26, 46, 1) 100%);
+        }
+        
+        /* Upcoming news row - Green with STRONGER pulse animation */
+        .upcoming-row {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.15) 50%, rgba(34, 197, 94, 0.02) 100%);
+            border-left: 4px solid #22c55e !important;
+            animation: upcoming-pulse 1.5s ease-in-out infinite;
+            position: relative;
+        }
+        .upcoming-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            animation: shine 2s ease-in-out infinite;
+        }
+        .upcoming-row:hover {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.4) 0%, rgba(34, 197, 94, 0.2) 50%, rgba(26, 26, 46, 1) 100%);
+        }
+        
+        @keyframes upcoming-pulse {
+            0%, 100% { box-shadow: inset 0 0 0 0 rgba(34, 197, 94, 0), 0 0 0 0 rgba(34, 197, 94, 0); }
+            50% { box-shadow: inset 0 0 30px 0 rgba(34, 197, 94, 0.15), 0 0 15px 0 rgba(34, 197, 94, 0.1); }
+        }
+        
+        @keyframes shine {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Clock spin animation for upcoming */
+        @keyframes clock-tick {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .clock-spin {
+            animation: clock-tick 2s linear infinite;
+        }
+        
+        /* Badge pulse for upcoming */
+        @keyframes badge-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        .badge-pulse {
+            animation: badge-pulse 1s ease-in-out infinite;
+        }
+        
+        /* Live dot animation */
+        @keyframes live-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        .live-dot {
+            animation: live-dot 1s ease-in-out infinite;
+        }
+        
+        /* Countdown pulse */
+        @keyframes countdown-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .countdown-pulse {
+            animation: countdown-pulse 1s ease-in-out infinite;
+        }
+        
+        /* Alert banner gradient animation */
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .animated-gradient {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
         /* Filter bar horizontal scroll */
         .filter-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .filter-scroll::-webkit-scrollbar { display: none; }
+        
+        /* Mobile card styles - MORE PROMINENT */
+        .today-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+        }
+        .upcoming-card {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.1) 100%);
+            border-left: 4px solid #22c55e;
+            animation: upcoming-card-pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
+        }
+        
+        @keyframes upcoming-card-pulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15); }
+            50% { box-shadow: 0 4px 30px rgba(34, 197, 94, 0.3); }
+        }
+        
+        /* Alert banner spacing */
+        .alert-banner {
+            z-index: 30;
+        }
     </style>
 </head>
 <body class="bg-[#0d0d1a] text-gray-100 min-h-screen">
     <div id="app" class="max-w-7xl mx-auto px-4 py-6">
         
-        <!-- Page Header -->
+        <!-- Page Header (FIRST) -->
         <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
@@ -76,6 +199,71 @@
                 </button>
             </div>
         </header>
+
+        <!-- URGENT: Today's & Upcoming Events Alert Banner (After Header) -->
+        <div id="alertBanner" class="mb-6 space-y-3">
+            <!-- Next Upcoming Event Alert -->
+            <div id="upcomingAlert" class="hidden bg-gradient-to-r from-green-600/30 via-green-500/20 to-emerald-600/30 animated-gradient border border-green-500/50 rounded-xl p-4 glow-green">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center justify-center w-12 h-12 bg-green-500/30 rounded-full border border-green-500/50">
+                            <span class="text-2xl">🚨</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-bold bg-green-500 text-white uppercase tracking-wider">
+                                    <span class="w-2 h-2 bg-white rounded-full live-dot"></span>
+                                    Coming Up
+                                </span>
+                                <span id="upcomingCountdown" class="text-green-300 text-sm font-mono font-bold countdown-pulse">--:--:--</span>
+                            </div>
+                            <h3 id="upcomingEventTitle" class="text-white font-bold text-lg">Loading...</h3>
+                            <p id="upcomingEventMeta" class="text-green-200/80 text-sm mt-0.5">
+                                <span id="upcomingEventTime">--:--</span> • <span id="upcomingEventCurrency">---</span> • <span id="upcomingEventImpact">---</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="scrollToUpcoming()" class="flex items-center gap-2 px-5 py-2.5 bg-green-500 hover:bg-green-400 text-white font-semibold rounded-lg transition-all hover:scale-105 shadow-lg shadow-green-500/25">
+                        <span>View Details</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Today's Events Summary -->
+            <div id="todayAlert" class="hidden bg-gradient-to-r from-blue-600/25 via-blue-500/15 to-indigo-600/25 border border-blue-500/40 rounded-xl p-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center justify-center w-12 h-12 bg-blue-500/30 rounded-full border border-blue-500/50">
+                            <span class="text-2xl">📅</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-500 text-white uppercase tracking-wider">
+                                    Today
+                                </span>
+                                <span id="todayDate" class="text-blue-300 text-sm">--</span>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap text-sm">
+                                <span class="text-white font-semibold"><span id="todayTotalCount" class="text-lg font-bold">0</span> Events</span>
+                                <span class="text-blue-400">|</span>
+                                <span id="todayHighImpact" class="text-red-400 font-medium">0 High Impact</span>
+                                <span class="text-blue-400">|</span>
+                                <span id="todayRemaining" class="text-green-400 font-medium">0 Remaining</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="scrollToToday()" class="flex items-center gap-2 px-5 py-2.5 bg-blue-500/30 hover:bg-blue-500/50 text-blue-100 font-semibold rounded-lg border border-blue-500/50 transition-all">
+                        <span>Jump to Today</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- Filter Control Bar -->
         <div class="bg-[#12121f] border border-gray-800 rounded-xl p-4 mb-6">
@@ -152,15 +340,12 @@
                 <table class="w-full">
                     <thead class="bg-[#0d0d1a] border-b border-gray-800">
                         <tr>
-                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Time</th>
-                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Currency</th>
-                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Impact</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider w-24">Date</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider w-24">Time</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider w-20">Currency</th>
+                            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider w-28">Impact</th>
                             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Event</th>
-                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Forecast</th>
-                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actual</th>
-                            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Previous</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Details</th>
+                            <th class="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider w-28">Details</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -212,7 +397,7 @@
 
     <!-- Event Details Slide Panel -->
     <div id="panelOverlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="closePanel()"></div>
-    <aside id="detailsPanel" class="slide-panel fixed top-0 right-0 h-full w-full md:w-[420px] bg-[#12121f] border-l border-gray-800 z-50 overflow-y-auto shadow-2xl">
+    <aside id="detailsPanel" class="slide-panel fixed top-0 right-0 h-full w-full md:w-[450px] bg-[#12121f] border-l border-gray-800 z-50 overflow-y-auto shadow-2xl">
         <div class="p-6">
             <!-- Panel Header -->
             <div class="flex items-start justify-between mb-6">
@@ -231,34 +416,56 @@
             </div>
             
             <!-- Badges -->
-            <div id="panelBadges" class="flex items-center gap-3 mb-6">
+            <div id="panelBadges" class="flex items-center gap-3 mb-6 flex-wrap">
                 <!-- Dynamic badges -->
             </div>
             
-            <!-- Event Data Section -->
-            <div class="bg-[#0d0d1a] rounded-xl p-4 mb-6 border border-gray-800">
-                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Event Data</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">Forecast</span>
-                        <span id="panelForecast" class="text-white font-medium">—</span>
+            <!-- Event Data Section - Cards Layout -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <!-- Forecast Card -->
+                <div class="bg-[#0d0d1a] rounded-xl p-4 border border-gray-800 text-center">
+                    <span class="text-gray-500 text-xs uppercase tracking-wider block mb-2">Forecast</span>
+                    <span id="panelForecast" class="text-xl font-bold text-white">—</span>
+                </div>
+                <!-- Actual Card -->
+                <div id="actualCard" class="bg-[#0d0d1a] rounded-xl p-4 border border-gray-800 text-center">
+                    <span class="text-gray-500 text-xs uppercase tracking-wider block mb-2">Actual</span>
+                    <span id="panelActual" class="text-xl font-bold text-white">—</span>
+                    <div id="comparisonIndicator" class="mt-1 text-xs hidden">
+                        <!-- Dynamic comparison -->
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">Actual</span>
-                        <span id="panelActual" class="text-white font-medium">—</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">Previous</span>
-                        <span id="panelPrevious" class="text-white font-medium">—</span>
+                </div>
+                <!-- Previous Card -->
+                <div class="bg-[#0d0d1a] rounded-xl p-4 border border-gray-800 text-center">
+                    <span class="text-gray-500 text-xs uppercase tracking-wider block mb-2">Previous</span>
+                    <span id="panelPrevious" class="text-xl font-bold text-white">—</span>
+                </div>
+            </div>
+            
+            <!-- Surprise Indicator (when actual differs significantly from forecast) -->
+            <div id="surpriseIndicator" class="hidden bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl p-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">⚡</span>
+                    <div>
+                        <h4 class="text-amber-400 font-semibold text-sm">Market Surprise!</h4>
+                        <p id="surpriseText" class="text-gray-300 text-xs mt-1">Actual significantly differs from forecast</p>
                     </div>
                 </div>
             </div>
             
             <!-- Description Section -->
             <div class="bg-[#0d0d1a] rounded-xl p-4 mb-6 border border-gray-800">
-                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Description</h3>
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">📖 What This Means</h3>
                 <p id="panelDescription" class="text-gray-300 text-sm leading-relaxed">
                     Event description will appear here...
+                </p>
+            </div>
+            
+            <!-- Impact Explanation -->
+            <div id="impactExplainer" class="bg-[#0d0d1a] rounded-xl p-4 mb-6 border border-gray-800">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">📊 Market Impact</h3>
+                <p id="impactText" class="text-gray-300 text-sm leading-relaxed">
+                    High impact events typically cause significant volatility in currency pairs.
                 </p>
             </div>
             
@@ -275,21 +482,48 @@
     </aside>
 
     <script>
-        // Sample event data
+        // Get today's date for demo purposes
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const tomorrowStr = new Date(today.getTime() + 86400000).toISOString().split('T')[0];
+        const dayAfterStr = new Date(today.getTime() + 86400000 * 2).toISOString().split('T')[0];
+        const twoDaysAgo = new Date(today.getTime() - 86400000 * 2).toISOString().split('T')[0];
+        const yesterday = new Date(today.getTime() - 86400000).toISOString().split('T')[0];
+        
+        // Calculate times relative to now for realistic upcoming events
+        const now = new Date();
+        const in30min = new Date(now.getTime() + 30 * 60000);
+        const in1hr = new Date(now.getTime() + 60 * 60000);
+        const in2hr = new Date(now.getTime() + 120 * 60000);
+        const in3hr = new Date(now.getTime() + 180 * 60000);
+        const ago1hr = new Date(now.getTime() - 60 * 60000);
+        const ago3hr = new Date(now.getTime() - 180 * 60000);
+        
+        const formatTimeHHMM = (d) => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+
+        // Sample event data with dynamic dates - includes upcoming events relative to current time
         const eventsData = [
-            { id: 1, date: '2025-01-20', time: '08:30', currency: 'USD', impact: 'high', title: 'Consumer Price Index (CPI) m/m', forecast: '0.3%', actual: '0.4%', previous: '0.2%', url: 'https://www.bls.gov/cpi/', description: 'Measures the change in the price of goods and services purchased by consumers. It is the main indicator of inflation.' },
-            { id: 2, date: '2025-01-20', time: '10:00', currency: 'EUR', impact: 'high', title: 'ECB Interest Rate Decision', forecast: '4.25%', actual: null, previous: '4.25%', url: 'https://www.ecb.europa.eu/', description: 'The European Central Bank decides on the interest rate for the Eurozone. Higher rates strengthen the Euro.' },
-            { id: 3, date: '2025-01-20', time: '14:00', currency: 'GBP', impact: 'medium', title: 'Claimant Count Change', forecast: '15.2K', actual: '12.8K', previous: '18.5K', url: 'https://www.ons.gov.uk/', description: 'Measures the change in the number of people claiming unemployment benefits during the reported month.' },
-            { id: 4, date: '2025-01-21', time: '00:30', currency: 'JPY', impact: 'high', title: 'Bank of Japan Rate Decision', forecast: '-0.1%', actual: null, previous: '-0.1%', url: 'https://www.boj.or.jp/', description: 'The Bank of Japan sets the target interest rate. Changes impact the value of the Japanese Yen significantly.' },
-            { id: 5, date: '2025-01-21', time: '09:00', currency: 'EUR', impact: 'medium', title: 'German ZEW Economic Sentiment', forecast: '15.3', actual: '17.2', previous: '12.5', url: 'https://www.zew.de/', description: 'Survey of up to 300 experts on the relative 6-month economic outlook for Germany.' },
-            { id: 6, date: '2025-01-21', time: '13:30', currency: 'USD', impact: 'medium', title: 'Building Permits', forecast: '1.48M', actual: null, previous: '1.46M', url: 'https://www.census.gov/', description: 'Annualized number of new residential building permits issued during the month. A leading indicator of housing activity.' },
-            { id: 7, date: '2025-01-22', time: '07:00', currency: 'GBP', impact: 'high', title: 'CPI y/y', forecast: '4.1%', actual: null, previous: '3.9%', url: 'https://www.ons.gov.uk/', description: 'Year-over-year change in the price of goods and services purchased by consumers in the UK.' },
-            { id: 8, date: '2025-01-22', time: '10:00', currency: 'CAD', impact: 'low', title: 'NHPI m/m', forecast: '0.2%', actual: '0.1%', previous: '0.3%', url: 'https://www.statcan.gc.ca/', description: 'New Housing Price Index measures the change in the selling prices of new residential houses.' },
-            { id: 9, date: '2025-01-22', time: '15:00', currency: 'USD', impact: 'high', title: 'FOMC Meeting Minutes', forecast: null, actual: null, previous: null, url: 'https://www.federalreserve.gov/', description: 'Detailed record of the FOMC most recent meeting, providing insights on economic conditions and future policy.' },
-            { id: 10, date: '2025-01-23', time: '02:00', currency: 'AUD', impact: 'medium', title: 'Employment Change', forecast: '25.0K', actual: null, previous: '35.6K', url: 'https://www.abs.gov.au/', description: 'Change in the number of employed people. Job creation is an important leading indicator of consumer spending.' },
-            { id: 11, date: '2025-01-23', time: '09:30', currency: 'CHF', impact: 'low', title: 'Trade Balance', forecast: '4.2B', actual: '4.5B', previous: '3.9B', url: 'https://www.snb.ch/', description: 'Difference in value between imported and exported goods during the reported month.' },
-            { id: 12, date: '2025-01-24', time: '08:30', currency: 'USD', impact: 'high', title: 'Core PCE Price Index m/m', forecast: '0.2%', actual: null, previous: '0.1%', url: 'https://www.bea.gov/', description: 'Fed\'s preferred inflation measure. Excludes volatile food and energy prices for a clearer inflation picture.' },
-            { id: 13, date: '2025-01-24', time: '10:00', currency: 'NZD', impact: 'medium', title: 'Credit Card Spending y/y', forecast: null, actual: '3.2%', previous: '2.8%', url: 'https://www.rbnz.govt.nz/', description: 'Measures the annual change in the total value of credit card transactions.' },
+            { id: 1, date: twoDaysAgo, time: '08:30', currency: 'USD', impact: 'high', title: 'Consumer Price Index (CPI) m/m', forecast: '0.3%', actual: '0.4%', previous: '0.2%', url: 'https://www.bls.gov/cpi/', description: 'Measures the change in the price of goods and services purchased by consumers. It is the main indicator of inflation.' },
+            { id: 2, date: yesterday, time: '10:00', currency: 'EUR', impact: 'high', title: 'ECB Interest Rate Decision', forecast: '4.25%', actual: '4.25%', previous: '4.25%', url: 'https://www.ecb.europa.eu/', description: 'The European Central Bank decides on the interest rate for the Eurozone. Higher rates strengthen the Euro.' },
+            { id: 3, date: yesterday, time: '14:00', currency: 'GBP', impact: 'medium', title: 'Claimant Count Change', forecast: '15.2K', actual: '12.8K', previous: '18.5K', url: 'https://www.ons.gov.uk/', description: 'Measures the change in the number of people claiming unemployment benefits during the reported month.' },
+            // Today's earlier events (past)
+            { id: 4, date: todayStr, time: formatTimeHHMM(ago3hr), currency: 'JPY', impact: 'high', title: 'Bank of Japan Rate Decision', forecast: '-0.1%', actual: '-0.1%', previous: '-0.1%', url: 'https://www.boj.or.jp/', description: 'The Bank of Japan sets the target interest rate. Changes impact the value of the Japanese Yen significantly.' },
+            { id: 5, date: todayStr, time: formatTimeHHMM(ago1hr), currency: 'EUR', impact: 'medium', title: 'German ZEW Economic Sentiment', forecast: '15.3', actual: '17.2', previous: '12.5', url: 'https://www.zew.de/', description: 'Survey of up to 300 experts on the relative 6-month economic outlook for Germany.' },
+            // UPCOMING - In 30 minutes - HIGH IMPACT
+            { id: 6, date: todayStr, time: formatTimeHHMM(in30min), currency: 'USD', impact: 'high', title: 'Non-Farm Payrolls (NFP)', forecast: '185K', actual: null, previous: '216K', url: 'https://www.bls.gov/', description: 'Measures the change in the number of employed people during the previous month, excluding the farming industry. Job creation is the foremost indicator of consumer spending.' },
+            // UPCOMING - In 1 hour
+            { id: 7, date: todayStr, time: formatTimeHHMM(in1hr), currency: 'USD', impact: 'high', title: 'Unemployment Rate', forecast: '3.8%', actual: null, previous: '3.7%', url: 'https://www.bls.gov/', description: 'Percentage of the total work force that is unemployed and actively seeking employment during the previous month.' },
+            // UPCOMING - In 2 hours
+            { id: 8, date: todayStr, time: formatTimeHHMM(in2hr), currency: 'CAD', impact: 'medium', title: 'Employment Change', forecast: '25.0K', actual: null, previous: '37.3K', url: 'https://www.statcan.gc.ca/', description: 'Change in the number of employed people. Job creation is an important leading indicator of consumer spending.' },
+            // Today's later events
+            { id: 9, date: todayStr, time: formatTimeHHMM(in3hr), currency: 'USD', impact: 'medium', title: 'ISM Manufacturing PMI', forecast: '47.5', actual: null, previous: '47.1', url: 'https://www.ismworld.org/', description: 'Level of a diffusion index based on surveyed purchasing managers in the manufacturing industry.' },
+            { id: 10, date: tomorrowStr, time: '07:00', currency: 'GBP', impact: 'high', title: 'CPI y/y', forecast: '4.1%', actual: null, previous: '3.9%', url: 'https://www.ons.gov.uk/', description: 'Year-over-year change in the price of goods and services purchased by consumers in the UK.' },
+            { id: 11, date: tomorrowStr, time: '10:00', currency: 'CAD', impact: 'low', title: 'NHPI m/m', forecast: '0.2%', actual: null, previous: '0.3%', url: 'https://www.statcan.gc.ca/', description: 'New Housing Price Index measures the change in the selling prices of new residential houses.' },
+            { id: 12, date: tomorrowStr, time: '15:00', currency: 'USD', impact: 'high', title: 'FOMC Meeting Minutes', forecast: null, actual: null, previous: null, url: 'https://www.federalreserve.gov/', description: 'Detailed record of the FOMC most recent meeting, providing insights on economic conditions and future policy.' },
+            { id: 13, date: dayAfterStr, time: '02:00', currency: 'AUD', impact: 'medium', title: 'Employment Change', forecast: '25.0K', actual: null, previous: '35.6K', url: 'https://www.abs.gov.au/', description: 'Change in the number of employed people. Job creation is an important leading indicator of consumer spending.' },
+            { id: 14, date: dayAfterStr, time: '09:30', currency: 'CHF', impact: 'low', title: 'Trade Balance', forecast: '4.2B', actual: null, previous: '3.9B', url: 'https://www.snb.ch/', description: 'Difference in value between imported and exported goods during the reported month.' },
+            { id: 15, date: dayAfterStr, time: '08:30', currency: 'USD', impact: 'high', title: 'Core PCE Price Index m/m', forecast: '0.2%', actual: null, previous: '0.1%', url: 'https://www.bea.gov/', description: 'Fed\'s preferred inflation measure. Excludes volatile food and energy prices for a clearer inflation picture.' },
+            { id: 16, date: dayAfterStr, time: '10:00', currency: 'NZD', impact: 'medium', title: 'Credit Card Spending y/y', forecast: null, actual: null, previous: '2.8%', url: 'https://www.rbnz.govt.nz/', description: 'Measures the annual change in the total value of credit card transactions.' },
         ];
 
         // State
@@ -321,16 +555,117 @@
             low: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30', icon: '🟡', glow: '' }
         };
 
+        // Impact explanations
+        const impactExplanations = {
+            high: 'High impact events typically cause significant volatility in currency pairs. Expect potential price swings of 50+ pips within minutes of release.',
+            medium: 'Medium impact events can cause moderate market movement. Expect potential price swings of 20-50 pips.',
+            low: 'Low impact events usually have minimal effect on currency prices but may contribute to overall market sentiment.'
+        };
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             initDatePicker();
             attachEventListeners();
             renderTable();
+            updateAlertBanners();
+            startCountdownTimer();
         });
+        
+        // Countdown timer interval
+        let countdownInterval = null;
+        
+        function startCountdownTimer() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                updateAlertBanners();
+            }, 1000);
+        }
+        
+        function updateAlertBanners() {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            
+            // Get today's events
+            const todayEvents = state.events.filter(e => e.date === todayStr);
+            const todayHighImpact = todayEvents.filter(e => e.impact === 'high').length;
+            const todayRemaining = todayEvents.filter(e => {
+                const eventTime = new Date(`${e.date}T${e.time}:00`);
+                return eventTime > now;
+            }).length;
+            
+            // Update Today Alert
+            const todayAlert = document.getElementById('todayAlert');
+            if (todayEvents.length > 0) {
+                todayAlert.classList.remove('hidden');
+                document.getElementById('todayDate').textContent = formatShortDate(todayStr);
+                document.getElementById('todayTotalCount').textContent = todayEvents.length;
+                document.getElementById('todayHighImpact').textContent = `${todayHighImpact} High Impact`;
+                document.getElementById('todayRemaining').textContent = `${todayRemaining} Remaining`;
+            } else {
+                todayAlert.classList.add('hidden');
+            }
+            
+            // Find next upcoming event (within next 4 hours)
+            const upcomingEvents = state.events.filter(e => {
+                const eventTime = new Date(`${e.date}T${e.time}:00`);
+                const diffMs = eventTime - now;
+                const diffHours = diffMs / (1000 * 60 * 60);
+                return diffHours > 0 && diffHours <= 4;
+            }).sort((a, b) => {
+                const timeA = new Date(`${a.date}T${a.time}:00`);
+                const timeB = new Date(`${b.date}T${b.time}:00`);
+                return timeA - timeB;
+            });
+            
+            const upcomingAlert = document.getElementById('upcomingAlert');
+            if (upcomingEvents.length > 0) {
+                const nextEvent = upcomingEvents[0];
+                const eventTime = new Date(`${nextEvent.date}T${nextEvent.time}:00`);
+                const diffMs = eventTime - now;
+                
+                // Format countdown
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+                const countdown = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                upcomingAlert.classList.remove('hidden');
+                document.getElementById('upcomingCountdown').textContent = countdown;
+                document.getElementById('upcomingEventTitle').textContent = nextEvent.title;
+                document.getElementById('upcomingEventTime').textContent = formatTime(nextEvent.time, state.selectedTimezone);
+                document.getElementById('upcomingEventCurrency').textContent = nextEvent.currency;
+                document.getElementById('upcomingEventImpact').textContent = nextEvent.impact.charAt(0).toUpperCase() + nextEvent.impact.slice(1) + ' Impact';
+                
+                // Store the event ID for quick access
+                upcomingAlert.dataset.eventId = nextEvent.id;
+            } else {
+                upcomingAlert.classList.add('hidden');
+            }
+        }
+        
+        function scrollToUpcoming() {
+            const upcomingAlert = document.getElementById('upcomingAlert');
+            const eventId = upcomingAlert.dataset.eventId;
+            if (eventId) {
+                openPanel(parseInt(eventId));
+            }
+        }
+        
+        function scrollToToday() {
+            const todayRow = document.querySelector('.today-row, .upcoming-row');
+            if (todayRow) {
+                todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Flash effect
+                todayRow.style.transition = 'all 0.3s';
+                todayRow.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    todayRow.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
 
         function initDatePicker() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('datePicker').value = today;
+            document.getElementById('datePicker').value = todayStr;
         }
 
         function attachEventListeners() {
@@ -462,8 +797,18 @@
         }
 
         function formatDate(dateStr) {
-            const date = new Date(dateStr);
+            const date = new Date(dateStr + 'T12:00:00');
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function formatFullDate(dateStr) {
+            const date = new Date(dateStr + 'T12:00:00');
+            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        }
+        
+        function formatShortDate(dateStr) {
+            const date = new Date(dateStr + 'T12:00:00');
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         }
 
         function getCurrencyBadge(currency) {
@@ -486,9 +831,69 @@
             return 'text-gray-400';
         }
 
-        function isPastEvent(date, time) {
+        function getEventStatus(date, time) {
+            const now = new Date();
             const eventDate = new Date(`${date}T${time}:00`);
-            return eventDate < new Date();
+            const todayDate = now.toISOString().split('T')[0];
+            
+            // Calculate time difference
+            const diffMs = eventDate - now;
+            const diffHours = diffMs / (1000 * 60 * 60);
+            
+            // Past events (already happened)
+            if (diffMs < 0) {
+                return 'past';
+            }
+            
+            // Check if it's today
+            if (date === todayDate) {
+                // Check if upcoming (within next 4 hours) - these get special attention
+                if (diffHours > 0 && diffHours <= 4) {
+                    return 'upcoming';
+                }
+                // Today but more than 4 hours away
+                return 'today';
+            }
+            
+            // Future events (not today)
+            return 'future';
+        }
+
+        function getStatusBadge(status, time) {
+            if (status === 'today') {
+                return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-blue-500 text-white shadow-lg shadow-blue-500/30">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                    TODAY
+                </span>`;
+            }
+            if (status === 'upcoming') {
+                return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-green-500 text-white shadow-lg shadow-green-500/30 badge-pulse">
+                    <svg class="w-3.5 h-3.5 clock-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    SOON
+                </span>`;
+            }
+            if (status === 'past') {
+                return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-700/50 text-gray-500">PAST</span>`;
+            }
+            return '';
+        }
+        
+        function getTimeUntil(date, time) {
+            const now = new Date();
+            const eventTime = new Date(`${date}T${time}:00`);
+            const diffMs = eventTime - now;
+            
+            if (diffMs <= 0) return null;
+            
+            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (hours > 0) {
+                return `in ${hours}h ${minutes}m`;
+            }
+            return `in ${minutes}m`;
         }
 
         function renderTable() {
@@ -498,38 +903,72 @@
                 document.getElementById('emptyState').classList.remove('hidden');
                 document.getElementById('tableContainer').classList.add('hidden');
                 document.getElementById('cardContainer').classList.add('hidden');
+                document.getElementById('alertBanner').classList.add('hidden');
                 return;
             }
             
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('tableContainer').classList.remove('hidden');
             document.getElementById('cardContainer').classList.remove('hidden');
+            document.getElementById('alertBanner').classList.remove('hidden');
             
             renderDesktopTable();
             renderMobileCards();
+            updateAlertBanners();
         }
 
         function renderDesktopTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = state.filteredEvents.map(event => {
-                const isPast = isPastEvent(event.date, event.time);
-                const rowClass = event.impact === 'high' ? 'high-impact-row' : '';
-                const opacityClass = isPast ? 'opacity-60' : '';
-                const actualColor = getValueColor(event.actual, event.forecast);
+                const status = getEventStatus(event.date, event.time);
+                
+                let rowClass = '';
+                let opacityClass = '';
+                let rowId = '';
+                
+                if (status === 'past') {
+                    opacityClass = 'opacity-40';
+                } else if (status === 'today') {
+                    rowClass = 'today-row';
+                    rowId = 'today-row-' + event.id;
+                } else if (status === 'upcoming') {
+                    rowClass = 'upcoming-row';
+                    rowId = 'upcoming-row-' + event.id;
+                }
+                
+                const statusBadge = getStatusBadge(status, event.time);
+                const timeUntil = getTimeUntil(event.date, event.time);
+                
+                // Special styling for upcoming high impact
+                const isUrgent = status === 'upcoming' && event.impact === 'high';
+                const urgentClass = isUrgent ? 'ring-2 ring-green-500/50' : '';
                 
                 return `
-                    <tr class="${rowClass} ${opacityClass} hover:bg-[#1a1a2e] transition-colors border-b border-gray-800/50 cursor-pointer" onclick="openPanel(${event.id})">
-                        <td class="px-4 py-3 text-sm text-gray-300">${formatDate(event.date)}</td>
-                        <td class="px-4 py-3 text-sm text-gray-300 font-mono">${formatTime(event.time, state.selectedTimezone)}</td>
-                        <td class="px-4 py-3">${getCurrencyBadge(event.currency)}</td>
-                        <td class="px-4 py-3">${getImpactBadge(event.impact)}</td>
-                        <td class="px-4 py-3 text-sm text-gray-100 font-medium max-w-xs truncate">${event.title}</td>
-                        <td class="px-4 py-3 text-sm text-gray-400 text-right font-mono">${event.forecast || '—'}</td>
-                        <td class="px-4 py-3 text-sm text-right font-mono ${actualColor}">${event.actual || '—'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-400 text-right font-mono">${event.previous || '—'}</td>
-                        <td class="px-4 py-3 text-center">
-                            <button class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-300 bg-[#1a1a2e] border border-gray-700 rounded-full hover:bg-[#2a2a4a] hover:text-white transition-colors">
-                                View
+                    <tr id="${rowId}" class="${rowClass} ${opacityClass} ${urgentClass} hover:bg-[#1a1a2e] transition-all border-b border-gray-800/50 cursor-pointer" onclick="openPanel(${event.id})">
+                        <td class="px-4 py-4">
+                            <div class="flex flex-col gap-1.5">
+                                <span class="text-sm text-gray-300 font-medium">${formatDate(event.date)}</span>
+                                ${statusBadge}
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm ${status === 'upcoming' ? 'text-green-300 font-bold' : status === 'today' ? 'text-blue-300 font-semibold' : 'text-gray-300'} font-mono">${formatTime(event.time, state.selectedTimezone)}</span>
+                                ${timeUntil ? `<span class="text-xs ${status === 'upcoming' ? 'text-green-400' : 'text-blue-400'} font-medium mt-0.5">${timeUntil}</span>` : ''}
+                            </div>
+                        </td>
+                        <td class="px-4 py-4">${getCurrencyBadge(event.currency)}</td>
+                        <td class="px-4 py-4">${getImpactBadge(event.impact)}</td>
+                        <td class="px-4 py-4">
+                            <span class="text-sm ${status === 'upcoming' || status === 'today' ? 'text-white font-semibold' : 'text-gray-100 font-medium'}">${event.title}</span>
+                            ${isUrgent ? '<span class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/30 text-red-300 uppercase">High Priority</span>' : ''}
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <button class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold ${status === 'upcoming' ? 'text-green-300 bg-green-500/20 border-green-500/50 hover:bg-green-500/30' : status === 'today' ? 'text-blue-300 bg-blue-500/20 border-blue-500/50 hover:bg-blue-500/30' : 'text-gray-300 bg-[#1a1a2e] border-gray-700 hover:bg-[#2a2a4a]'} border rounded-lg hover:text-white transition-all">
+                                <span>View</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
                             </button>
                         </td>
                     </tr>
@@ -540,37 +979,49 @@
         function renderMobileCards() {
             const container = document.getElementById('cardContainer');
             container.innerHTML = state.filteredEvents.map(event => {
-                const isPast = isPastEvent(event.date, event.time);
-                const opacityClass = isPast ? 'opacity-60' : '';
-                const actualColor = getValueColor(event.actual, event.forecast);
-                const borderClass = event.impact === 'high' ? 'border-l-4 border-l-red-500' : '';
+                const status = getEventStatus(event.date, event.time);
+                
+                let cardClass = 'bg-[#1a1a2e] border-gray-800';
+                let opacityClass = '';
+                let headerClass = 'text-gray-400';
+                let buttonClass = 'bg-[#12121f] border-gray-700 text-gray-300 hover:bg-[#2a2a4a]';
+                
+                if (status === 'past') {
+                    opacityClass = 'opacity-40';
+                } else if (status === 'today') {
+                    cardClass = 'today-card border-blue-500/30';
+                    headerClass = 'text-blue-300';
+                    buttonClass = 'bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30';
+                } else if (status === 'upcoming') {
+                    cardClass = 'upcoming-card border-green-500/30';
+                    headerClass = 'text-green-300';
+                    buttonClass = 'bg-green-500/20 border-green-500/50 text-green-300 hover:bg-green-500/30';
+                }
+                
+                const statusBadge = getStatusBadge(status, event.time);
+                const timeUntil = getTimeUntil(event.date, event.time);
+                const isUrgent = status === 'upcoming' && event.impact === 'high';
                 
                 return `
-                    <div class="bg-[#1a1a2e] rounded-xl p-4 ${borderClass} ${opacityClass} border border-gray-800">
+                    <div class="${cardClass} ${opacityClass} rounded-xl p-4 border ${isUrgent ? 'ring-2 ring-green-500/50' : ''}" onclick="openPanel(${event.id})">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-gray-400 text-sm">📅 ${formatDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)}</span>
+                            <div class="flex flex-col">
+                                <span class="${headerClass} text-sm font-medium">📅 ${formatDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)}</span>
+                                ${timeUntil ? `<span class="text-xs ${status === 'upcoming' ? 'text-green-400' : 'text-blue-400'} font-semibold mt-0.5">${timeUntil}</span>` : ''}
+                            </div>
+                            ${statusBadge}
                         </div>
-                        <div class="flex items-center gap-2 mb-3">
+                        <div class="flex items-center gap-2 mb-3 flex-wrap">
                             ${getCurrencyBadge(event.currency)}
                             ${getImpactBadge(event.impact)}
+                            ${isUrgent ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/30 text-red-300 uppercase">High Priority</span>' : ''}
                         </div>
-                        <h3 class="text-white font-medium mb-3">📰 ${event.title}</h3>
-                        <div class="grid grid-cols-3 gap-2 text-sm mb-4">
-                            <div>
-                                <span class="text-gray-500 block text-xs">Forecast</span>
-                                <span class="text-gray-300 font-mono">${event.forecast || '—'}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500 block text-xs">Actual</span>
-                                <span class="${actualColor} font-mono">${event.actual || '—'}</span>
-                            </div>
-                            <div>
-                                <span class="text-gray-500 block text-xs">Previous</span>
-                                <span class="text-gray-300 font-mono">${event.previous || '—'}</span>
-                            </div>
-                        </div>
-                        <button onclick="openPanel(${event.id})" class="w-full py-2 bg-[#12121f] border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:bg-[#2a2a4a] transition-colors text-sm font-medium">
-                            View Details
+                        <h3 class="text-white font-semibold mb-4 ${status === 'upcoming' || status === 'today' ? 'text-lg' : ''}">${event.title}</h3>
+                        <button class="w-full py-3 ${buttonClass} border rounded-lg hover:text-white transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                            <span>View Details</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
                         </button>
                     </div>
                 `;
@@ -581,16 +1032,77 @@
             const event = state.events.find(e => e.id === eventId);
             if (!event) return;
             
-            document.getElementById('panelTitle').textContent = event.title;
-            document.getElementById('panelDateTime').innerHTML = `<span>📅</span><span>${formatDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)} (${state.selectedTimezone})</span>`;
-            document.getElementById('panelBadges').innerHTML = `${getCurrencyBadge(event.currency)} ${getImpactBadge(event.impact)}`;
+            const status = getEventStatus(event.date, event.time);
+            const statusBadge = getStatusBadge(status);
             
-            const actualColor = getValueColor(event.actual, event.forecast);
+            document.getElementById('panelTitle').textContent = event.title;
+            document.getElementById('panelDateTime').innerHTML = `<span>📅</span><span>${formatFullDate(event.date)} • ${formatTime(event.time, state.selectedTimezone)} (${state.selectedTimezone})</span>`;
+            document.getElementById('panelBadges').innerHTML = `${getCurrencyBadge(event.currency)} ${getImpactBadge(event.impact)} ${statusBadge}`;
+            
+            // Update data cards
             document.getElementById('panelForecast').textContent = event.forecast || '—';
-            document.getElementById('panelActual').className = `font-medium ${actualColor}`;
-            document.getElementById('panelActual').textContent = event.actual || '—';
             document.getElementById('panelPrevious').textContent = event.previous || '—';
+            
+            // Handle Actual with comparison
+            const actualEl = document.getElementById('panelActual');
+            const comparisonEl = document.getElementById('comparisonIndicator');
+            const actualCard = document.getElementById('actualCard');
+            
+            if (event.actual) {
+                actualEl.textContent = event.actual;
+                const color = getValueColor(event.actual, event.forecast);
+                actualEl.className = `text-xl font-bold ${color}`;
+                
+                // Show comparison indicator
+                if (event.forecast) {
+                    const actualNum = parseFloat(event.actual);
+                    const forecastNum = parseFloat(event.forecast);
+                    
+                    if (!isNaN(actualNum) && !isNaN(forecastNum)) {
+                        const diff = actualNum - forecastNum;
+                        const diffPercent = ((diff / forecastNum) * 100).toFixed(1);
+                        
+                        if (diff > 0) {
+                            comparisonEl.innerHTML = `<span class="text-green-400">▲ +${diffPercent}% vs forecast</span>`;
+                            actualCard.className = 'bg-gradient-to-b from-green-500/10 to-[#0d0d1a] rounded-xl p-4 border border-green-500/30 text-center';
+                        } else if (diff < 0) {
+                            comparisonEl.innerHTML = `<span class="text-red-400">▼ ${diffPercent}% vs forecast</span>`;
+                            actualCard.className = 'bg-gradient-to-b from-red-500/10 to-[#0d0d1a] rounded-xl p-4 border border-red-500/30 text-center';
+                        } else {
+                            comparisonEl.innerHTML = `<span class="text-gray-400">= As expected</span>`;
+                            actualCard.className = 'bg-[#0d0d1a] rounded-xl p-4 border border-gray-800 text-center';
+                        }
+                        comparisonEl.classList.remove('hidden');
+                        
+                        // Show surprise indicator for significant deviations
+                        const surpriseEl = document.getElementById('surpriseIndicator');
+                        const surpriseText = document.getElementById('surpriseText');
+                        if (Math.abs(parseFloat(diffPercent)) > 10) {
+                            surpriseText.textContent = diff > 0 
+                                ? `Actual came in ${Math.abs(diffPercent)}% higher than expected - potentially bullish for ${event.currency}`
+                                : `Actual came in ${Math.abs(diffPercent)}% lower than expected - potentially bearish for ${event.currency}`;
+                            surpriseEl.classList.remove('hidden');
+                        } else {
+                            surpriseEl.classList.add('hidden');
+                        }
+                    } else {
+                        comparisonEl.classList.add('hidden');
+                        document.getElementById('surpriseIndicator').classList.add('hidden');
+                    }
+                } else {
+                    comparisonEl.classList.add('hidden');
+                    document.getElementById('surpriseIndicator').classList.add('hidden');
+                }
+            } else {
+                actualEl.textContent = '—';
+                actualEl.className = 'text-xl font-bold text-gray-500';
+                comparisonEl.classList.add('hidden');
+                actualCard.className = 'bg-[#0d0d1a] rounded-xl p-4 border border-gray-800 text-center';
+                document.getElementById('surpriseIndicator').classList.add('hidden');
+            }
+            
             document.getElementById('panelDescription').textContent = event.description;
+            document.getElementById('impactText').textContent = impactExplanations[event.impact];
             document.getElementById('panelSourceLink').href = event.url;
             
             document.getElementById('panelOverlay').classList.remove('hidden');
